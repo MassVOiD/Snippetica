@@ -1,4 +1,18 @@
 ﻿{
+  "- new variable": {
+    "prefix": "vn",
+    "body": [
+      "var ${1:x} = new ${2:object}(${3:arguments});${0}"
+    ],
+    "description": "new variable declaration"
+  },
+  "- new variable (with initializer)": {
+    "prefix": "vnx",
+    "body": [
+      "var ${1:x} = new ${2:object}(${3:arguments}) { ${4:x} };${0}"
+    ],
+    "description": "new variable declaration (with initializer)"
+  },
   "- operator overloading": {
     "prefix": "oo_Minus",
     "body": [
@@ -326,7 +340,7 @@
     "body": [
       "DateTime${0}"
     ],
-    "description": "DateTime type declaration"
+    "description": "DateTime type"
   },
   "Debug.Assert": {
     "prefix": "da",
@@ -717,13 +731,6 @@
       "}"
     ],
     "description": "class that implements IComparer<T>"
-  },
-  "IEnumerable<T> type": {
-    "prefix": "ge",
-    "body": [
-      "IEnumerable<${1:T}>${0}"
-    ],
-    "description": "IEnumerable<T> type declaration"
   },
   "IEnumerator<T> variable": {
     "prefix": "u_er",
@@ -1171,20 +1178,6 @@
       "nameof(${1:x})${0}"
     ],
     "description": "nameof operator"
-  },
-  "new variable": {
-    "prefix": "vn",
-    "body": [
-      "var ${1:x} = new ${2:object}(${3:arguments});${0}"
-    ],
-    "description": "variable declaration with new object creation"
-  },
-  "new variable (with initializer)": {
-    "prefix": "vnx",
-    "body": [
-      "var ${1:x} = new ${2:object}(${3:arguments}) { ${4:x} };${0}"
-    ],
-    "description": "variable declaration with new object creation (with initializer)"
   },
   "not equal to null": {
     "prefix": "xn",

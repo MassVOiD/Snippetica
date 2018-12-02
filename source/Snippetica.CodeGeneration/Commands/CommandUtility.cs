@@ -20,38 +20,30 @@ namespace Snippetica.CodeGeneration.Commands
         public static Command Definition { get; } = new DefinitionCommand();
         public static Command GenerateAlternativeShortcuts { get; } = new GenerateAlternativeShortcutCommand();
 
-        public static IEnumerable<Command> GetTypeCommands(Snippet snippet, LanguageDefinition languageDefinition)
+        public static IEnumerable<Command> GetBasicTypeCommands(Snippet snippet, LanguageDefinition languageDefinition)
         {
             bool flg = false;
 
             foreach (TypeDefinition type in languageDefinition
                 .Types
-                .Where(f => !f.HasTag(KnownTags.Collection) && snippet.RequiresTypeGeneration(f.Name)))
+                .Where(f => f.HasTag(KnownTags.BasicType) && snippet.RequiresBasicTypeGeneration(f.Name)))
             {
-                yield return new TypeCommand(type);
+                yield return new BasicTypeCommand(type);
 
                 if (!flg)
                 {
-                    yield return new TypeCommand(TypeDefinition.Default);
+                    yield return new BasicTypeCommand(TypeDefinition.Default);
                     flg = true;
                 }
             }
         }
 
-        public static IEnumerable<Command> GetNonImmutableCollectionCommands(LanguageDefinition languageDefinition)
+        public static IEnumerable<Command> GetTypeCommands(LanguageDefinition languageDefinition)
         {
             return languageDefinition
                 .Types
-                .Where(f => f.HasTag(KnownTags.Collection) && !f.HasTag(KnownTags.Immutable))
-                .Select(f => new CollectionTypeCommand(f));
-        }
-
-        public static IEnumerable<Command> GetImmutableCollectionCommands(LanguageDefinition languageDefinition)
-        {
-            return languageDefinition
-                .Types
-                .Where(f => f.HasTag(KnownTags.Collection) && f.HasTag(KnownTags.Immutable))
-                .Select(f => new ImmutableCollectionTypeCommand(f));
+                .Where(f => !f.HasTag(KnownTags.BasicType))
+                .Select(f => new TypeCommand(f));
         }
 
         public static IEnumerable<Command> GetAccessModifierCommands(Snippet snippet, LanguageDefinition languageDefinition)

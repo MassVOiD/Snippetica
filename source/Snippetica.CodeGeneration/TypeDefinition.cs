@@ -9,7 +9,7 @@ namespace Snippetica.CodeGeneration
     [DebuggerDisplay("{Name,nq}")]
     public  class TypeDefinition
     {
-        public static TypeDefinition Default { get; } = new TypeDefinition(null, null, null, "a", null, null, null, Array.Empty<string>());
+        public static TypeDefinition Default { get; } = new TypeDefinition(null, null, null, "a", null, null, null, 0, Array.Empty<string>());
 
         public TypeDefinition(
             string name,
@@ -19,6 +19,7 @@ namespace Snippetica.CodeGeneration
             string defaultValue,
             string defaultIdentifier,
             string @namespace,
+            int arity,
             string[] tags)
         {
             Name = name;
@@ -28,6 +29,7 @@ namespace Snippetica.CodeGeneration
             DefaultValue = defaultValue;
             DefaultIdentifier = defaultIdentifier;
             Namespace = @namespace;
+            Arity = arity;
             Tags = new ReadOnlyCollection<string>(tags);
         }
 
@@ -44,6 +46,8 @@ namespace Snippetica.CodeGeneration
         public string DefaultIdentifier { get; }
 
         public string Namespace { get; }
+
+        public int Arity { get; }
 
         public ReadOnlyCollection<string> Tags { get; }
 

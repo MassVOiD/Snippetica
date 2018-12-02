@@ -55,20 +55,22 @@
             <Property Name="Namespace" />
           </Declarations>
           <BaseRecords>
-            <New Id="This" Shortcut="t" />
-            <New Id="Void" Shortcut="-" />
-            <New Id="Object" Shortcut="o" />
-            <New Id="String" Shortcut="s" DefaultIdentifier="s" />
-            <Add Tags="TryParse">
-              <New Id="Boolean" Shortcut="b" DefaultIdentifier="f" />
-              <New Id="Int32" Shortcut="i" DefaultValue="0" DefaultIdentifier="i" />
-              <New Id="DateTime" Shortcut="dt"  DefaultIdentifier="dt" />
-              <New Id="Int64" Shortcut="l" DefaultValue="0" DefaultIdentifier="i" />
-              <Add Tags="Disabled">
-                <New Id="Char" Shortcut="c" DefaultIdentifier="ch" />
-                <New Id="Decimal" Shortcut="dl" DefaultValue="0" />
-                <New Id="Double" Shortcut="de" DefaultValue="0" />
-                <New Id="Single" Shortcut="se" DefaultValue="0" />
+            <Add Tags="BasicType">
+              <New Id="This" Shortcut="t" />
+              <New Id="Void" Shortcut="-" />
+              <New Id="Object" Shortcut="o" />
+              <New Id="String" Shortcut="s" DefaultIdentifier="s" />
+              <Add Tags="TryParse">
+                <New Id="Boolean" Shortcut="b" DefaultIdentifier="f" />
+                <New Id="Int32" Shortcut="i" DefaultValue="0" DefaultIdentifier="i" />
+                <New Id="DateTime" Shortcut="dt"  DefaultIdentifier="dt" />
+                <New Id="Int64" Shortcut="l" DefaultValue="0" DefaultIdentifier="i" />
+                <Add Tags="Disabled">
+                  <New Id="Char" Shortcut="c" DefaultIdentifier="ch" />
+                  <New Id="Decimal" Shortcut="dl" DefaultValue="0" />
+                  <New Id="Double" Shortcut="de" DefaultValue="0" />
+                  <New Id="Single" Shortcut="se" DefaultValue="0" />
+                </Add>
               </Add>
             </Add>
           </BaseRecords>

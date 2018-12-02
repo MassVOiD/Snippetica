@@ -98,12 +98,11 @@
     <Compile Include="Commands\GenerateAlternativeShortcutCommand.cs" />
     <Compile Include="Commands\CommandKind.cs" />
     <Compile Include="Commands\SnippetCommand.cs" />
-    <Compile Include="Commands\ImmutableCollectionTypeCommand.cs" />
     <Compile Include="Commands\AccessModifierCommand.cs" />
     <Compile Include="Commands\PrefixTitleCommand.cs" />
     <Compile Include="Commands\StaticCommand.cs" />
     <Compile Include="Commands\InitializerCommand.cs" />
-    <Compile Include="Commands\CollectionTypeCommand.cs" />
+    <Compile Include="Commands\TypeCommand.cs" />
     <Compile Include="Commands\VirtualCommand.cs" />
     <Compile Include="Commands\XamlPropertyCommand.cs" />
     <Compile Include="CSharpDefinition.cs" />
@@ -122,7 +121,7 @@
     <Compile Include="SnippetGeneratorResult.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="TypeDefinition.cs" />
-    <Compile Include="Commands\TypeCommand.cs" />
+    <Compile Include="Commands\BasicTypeCommand.cs" />
     <Compile Include="TypeDefinitionCollection.cs" />
     <Compile Include="VisualBasicDefinition.cs" />
     <Compile Include="VisualStudioCode\VisualStudioCodeSnippetGenerator.cs" />

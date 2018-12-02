@@ -61,6 +61,7 @@ namespace Snippetica.CodeGeneration
                 record.GetStringOrDefault(Identifiers.DefaultValue),
                 record.GetStringOrDefault(Identifiers.DefaultIdentifier),
                 record.GetStringOrDefault(Identifiers.Namespace),
+                record.GetIntOrDefault(Identifiers.Arity),
                 record.GetTags());
         }
 
@@ -88,6 +89,7 @@ namespace Snippetica.CodeGeneration
             public const string DefaultIdentifier = nameof(DefaultIdentifier);
             public const string Name = nameof(Name);
             public const string Namespace = nameof(Namespace);
+            public const string Arity = nameof(Arity);
             public const string Type = nameof(Type);
             public const string Title = nameof(Title);
             public const string IsDevelopment = nameof(IsDevelopment);
