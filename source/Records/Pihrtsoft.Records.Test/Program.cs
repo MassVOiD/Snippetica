@@ -7,6 +7,7 @@ namespace Pihrtsoft.Records.Tests
 {
     internal static class Program
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1163:Unused parameter.")]
         internal static void Main(string[] args)
         {
             var settings = new DocumentSettings() { UseVariables = true };

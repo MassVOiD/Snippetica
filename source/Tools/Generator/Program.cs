@@ -28,6 +28,7 @@ namespace Snippetica.CodeGeneration
 
         private static readonly Regex _regexReplaceSpacesWithTabs = new Regex(@"(?<=^(\ {4})*)(?<x>\ {4})(?=(\ {4})*\S)", RegexOptions.Multiline);
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1163:Unused parameter.")]
         private static void Main(string[] args)
         {
             _shortcuts = ShortcutInfo.LoadFromFile(@"..\..\Data\Shortcuts.xml").ToArray();

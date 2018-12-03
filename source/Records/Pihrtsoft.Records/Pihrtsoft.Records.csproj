@@ -37,7 +37,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Operations\Operation.cs" />
     <Compile Include="Operations\OperationKind.cs" />
     <Compile Include="AbstractRecordReader.cs" />
