@@ -26,6 +26,7 @@ namespace Pihrtsoft.Records
         private XElement Current { get; set; }
         private int Depth { get; set; } = -1;
 
+        //TODO: OperationsByProperty
         private StringKeyedCollection<PropertyOperationCollection> Operations { get; set; }
 
         private Stack<Variable> Variables { get; set; }
@@ -54,15 +55,10 @@ namespace Pihrtsoft.Records
 
                             break;
                         }
-                    case ElementKind.Set:
-                    case ElementKind.Add:
-                    case ElementKind.AddRange:
-                    case ElementKind.Remove:
-                    case ElementKind.RemoveRange:
-                    case ElementKind.Postfix:
-                    case ElementKind.PostfixMany:
-                    case ElementKind.Prefix:
-                    case ElementKind.PrefixMany:
+                    case ElementKind.With:
+                    case ElementKind.Without:
+                    case ElementKind.WithPostfix:
+                    case ElementKind.WithPrefix:
                         {
                             if (element.HasElements)
                             {
@@ -189,7 +185,7 @@ namespace Pihrtsoft.Records
             {
                 Current = child;
 
-                CreateOperationsFromElement(child, throwOnMultiCommand: true).ExecuteAll(record);
+                CreateOperationsFromElement(child).ExecuteAll(record);
             }
 
             Current = element;
@@ -206,84 +202,88 @@ namespace Pihrtsoft.Records
 
                 foreach (IPropertyOperation operation in propertyOperations)
                 {
+                    OperationKind kind = operation.Kind;
+
                     if (operation.SupportsExecute)
                     {
                         operation.Execute(record);
 
                         if (pendingValues != null)
-                            ProcessPendingValues(pendingValues, propertyOperations.PropertyDefinition, record);
+                            ProcessPendingValues(pendingValues, propertyOperations.PropertyDefinition);
                     }
                     else
                     {
-                        OperationKind kind = operation.Kind;
-
                         pendingValues = pendingValues ?? new Dictionary<OperationKind, string>();
 
-                        if (!pendingValues.TryGetValue(kind, out string value))
+                        if (pendingValues.TryGetValue(kind, out string value))
                         {
-                            pendingValues[kind] = operation.Value;
+                            Debug.Assert(kind == OperationKind.WithPrefix || kind == OperationKind.WithPostfix, kind.ToString());
+
+                            pendingValues[kind] += operation.Value;
                         }
                         else
                         {
-                            switch (kind)
-                            {
-                                case OperationKind.PostfixMany:
-                                    {
-                                        pendingValues[kind] = operation.Value + pendingValues[kind];
-                                        break;
-                                    }
-                                case OperationKind.PrefixMany:
-                                    {
-                                        pendingValues[kind] += operation.Value;
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        Debug.Assert(false, kind.ToString());
-                                        break;
-                                    }
-                            }
+                            pendingValues[kind] = operation.Value;
                         }
                     }
                 }
 
                 if (pendingValues != null)
-                    ProcessPendingValues(pendingValues, propertyOperations.PropertyDefinition, record);
+                    ProcessPendingValues(pendingValues, propertyOperations.PropertyDefinition);
             }
-        }
 
-        private void ProcessPendingValues(Dictionary<OperationKind, string> operationValues, PropertyDefinition propertyDefinition, Record record)
-        {
-            foreach (KeyValuePair<OperationKind, string> pair in operationValues)
+            void ProcessPendingValues(Dictionary<OperationKind, string> pendingValues, PropertyDefinition propertyDefinition)
             {
-                switch (pair.Key)
-                {
-                    case OperationKind.PostfixMany:
-                        {
-                            new PostfixOperation(propertyDefinition, pair.Value, Depth).Execute(record);
-                            break;
-                        }
-                    case OperationKind.PrefixMany:
-                        {
-                            new PrefixOperation(propertyDefinition, pair.Value, Depth).Execute(record);
-                            break;
-                        }
-                    default:
-                        {
-                            Debug.Assert(false, pair.Key.ToString());
-                            break;
-                        }
-                }
-            }
+                string name = propertyDefinition.Name;
 
-            operationValues.Clear();
+                foreach (KeyValuePair<OperationKind, string> kvp in pendingValues)
+                {
+                    OperationKind kind = kvp.Key;
+
+                    if (kind == OperationKind.WithPostfix)
+                    {
+                        if (propertyDefinition.IsCollection)
+                        {
+                            if (record.TryGetCollection(name, out List<object> items))
+                            {
+                                for (int i = 0; i < items.Count; i++)
+                                    items[i] += kvp.Value;
+                            }
+                        }
+                        else
+                        {
+                            record[name] += kvp.Value;
+                        }
+                    }
+                    else if (kind == OperationKind.WithPrefix)
+                    {
+                        if (propertyDefinition.IsCollection)
+                        {
+                            if (record.TryGetCollection(name, out List<object> items))
+                            {
+                                for (int i = 0; i < items.Count; i++)
+                                    items[i] = kvp.Value + items[i];
+                            }
+                        }
+                        else
+                        {
+                            record[name] = kvp.Value + record[name];
+                        }
+                    }
+                    else
+                    {
+                        Debug.Assert(false, kind.ToString());
+                    }
+                }
+
+                pendingValues.Clear();
+            }
         }
 
         private IPropertyOperation CreateOperationFromAttribute(
             XElement element,
             ElementKind kind,
             XAttribute attribute,
-            char separator = ',',
             bool throwOnId = false,
             bool throwOnCollection = false)
         {
@@ -316,31 +316,21 @@ namespace Pihrtsoft.Records
 
             switch (kind)
             {
-                case ElementKind.Add:
-                    return new AddOperation(property, GetValue(attribute), Depth);
-                case ElementKind.AddRange:
-                    return new AddRangeOperation(property, GetValue(attribute), separator, Depth);
-                case ElementKind.Remove:
-                    return new RemoveOperation(property, GetValue(attribute), Depth);
-                case ElementKind.RemoveRange:
-                    return new RemoveRangeOperation(property, GetValue(attribute), separator, Depth);
+                case ElementKind.With:
+                    return new WithOperation(property, GetValue(attribute), Depth);
+                case ElementKind.Without:
+                    return new WithoutOperation(property, GetValue(attribute), Depth);
                 default:
                     {
-                        Debug.Assert(kind == ElementKind.Set || kind == ElementKind.New, kind.ToString());
+                        Debug.Assert(kind == ElementKind.New, kind.ToString());
 
-                        if (property.IsCollection)
-                        {
-                            return new AddOperation(property, GetValue(attribute), Depth);
-                        }
-                        else
-                        {
-                            return new SetOperation(property, GetValue(attribute), Depth);
-                        }
+                        return new WithOperation(property, GetValue(attribute), Depth);
                     }
             }
         }
 
-        private IEnumerable<IPropertyOperation> CreateOperationsFromElement(XElement element, bool throwOnMultiCommand = false)
+        //TODO: throwOnMultiCommand?
+        private IEnumerable<IPropertyOperation> CreateOperationsFromElement(XElement element)
         {
             Debug.Assert(element.HasAttributes, element.ToString());
 
@@ -348,81 +338,50 @@ namespace Pihrtsoft.Records
 
             switch (kind)
             {
-                case ElementKind.Set:
-                    {
-                        foreach (XAttribute attribute in element.Attributes())
-                            yield return CreateOperationFromAttribute(element, kind, attribute, throwOnId: true, throwOnCollection: true);
-
-                        break;
-                    }
-                case ElementKind.Postfix:
-                    {
-                        foreach (XAttribute attribute in element.Attributes())
-                            yield return new PostfixOperation(GetProperty(attribute), GetValue(attribute), Depth);
-
-                        break;
-                    }
-                case ElementKind.PostfixMany:
-                    {
-                        if (throwOnMultiCommand)
-                            ThrowInvalidOperation(ErrorMessages.CommandCannotBeUsedAsChildCommandOfNewCommand(element));
-
-                        foreach (XAttribute attribute in element.Attributes())
-                            yield return new PostfixManyOperation(GetProperty(attribute), GetValue(attribute), Depth);
-
-                        break;
-                    }
-                case ElementKind.Prefix:
-                    {
-                        foreach (XAttribute attribute in element.Attributes())
-                            yield return new PrefixOperation(GetProperty(attribute), GetValue(attribute), Depth);
-
-                        break;
-                    }
-                case ElementKind.PrefixMany:
-                    {
-                        if (throwOnMultiCommand)
-                            ThrowInvalidOperation(ErrorMessages.CommandCannotBeUsedAsChildCommandOfNewCommand(element));
-
-                        foreach (XAttribute attribute in element.Attributes())
-                            yield return new PrefixManyOperation(GetProperty(attribute), GetValue(attribute), Depth);
-
-                        break;
-                    }
-                case ElementKind.Add:
-                case ElementKind.Remove:
+                case ElementKind.With:
+                case ElementKind.Without:
                     {
                         foreach (XAttribute attribute in element.Attributes())
                             yield return CreateOperationFromAttribute(element, kind, attribute, throwOnId: true);
 
+                        //TODO: Separator
+                        //char separator = ',';
+
+                        //foreach (XAttribute attribute in element.Attributes())
+                        //{
+                        //    switch (attribute.LocalName())
+                        //    {
+                        //        case AttributeNames.Separator:
+                        //            {
+                        //                string separatorText = attribute.Value;
+
+                        //                if (separatorText.Length != 1)
+                        //                    Throw("Separator must be a single character", attribute);
+
+                        //                separator = separatorText[0];
+                        //                break;
+                        //            }
+                        //        default:
+                        //            {
+                        //                yield return CreateOperationFromAttribute(element, kind, attribute, separator: separator, throwOnId: true);
+                        //                break;
+                        //            }
+                        //    }
+                        //}
+
                         break;
                     }
-                case ElementKind.AddRange:
-                case ElementKind.RemoveRange:
+                case ElementKind.WithPostfix:
                     {
-                        char separator = ',';
-
                         foreach (XAttribute attribute in element.Attributes())
-                        {
-                            switch (attribute.LocalName())
-                            {
-                                case AttributeNames.Separator:
-                                    {
-                                        string separatorText = attribute.Value;
+                            yield return new WithPostfixOperation(GetProperty(attribute), GetValue(attribute), Depth);
 
-                                        if (separatorText.Length != 1)
-                                            Throw("Separator must be a single character", attribute);
-
-                                        separator = separatorText[0];
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        yield return CreateOperationFromAttribute(element, kind, attribute, separator: separator, throwOnId: true);
-                                        break;
-                                    }
-                            }
-                        }
+                        break;
+                    }
+                case ElementKind.WithPrefix:
+                    {
+                        foreach (XAttribute attribute in element.Attributes())
+                            yield return new WithPrefixOperation(GetProperty(attribute), GetValue(attribute), Depth);
 
                         break;
                     }
@@ -458,7 +417,7 @@ namespace Pihrtsoft.Records
         {
             try
             {
-                return AttributeValueParser.GetAttributeValue(value, this);
+                return ParseHelpers.ParseAttributeValue(value, this);
             }
             catch (InvalidValueException ex)
             {

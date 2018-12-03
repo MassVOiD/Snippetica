@@ -21,7 +21,7 @@ namespace Snippetica.CodeGeneration.Commands
         protected override void Execute(ExecutionContext context, Snippet snippet)
         {
             if (snippet.HasTag(KnownTags.Initializer)
-                && (Tags.Contains(KnownTags.Immutable) || Tags.Contains(KnownTags.Interface)))
+                && (Type.IsImmutable || Type.IsInterface))
             {
                 context.IsCanceled = true;
                 return;
@@ -32,7 +32,7 @@ namespace Snippetica.CodeGeneration.Commands
             string typeName = "";
             string fileName = "";
 
-            if (Tags.Contains(KnownTags.Dictionary))
+            if (Type.IsDictionary)
             {
                 typeName = language.GetTypeParameterList("TKey, TValue");
                 fileName = "OfTKeyTValue";
@@ -57,7 +57,7 @@ namespace Snippetica.CodeGeneration.Commands
 
             snippet.RemoveLiteralAndReplacePlaceholders(LiteralIdentifiers.Type, Type.Name);
 
-            if (Tags.Contains(KnownTags.Dictionary))
+            if (Type.IsDictionary)
             {
                 snippet.RemoveLiteralAndReplacePlaceholders(LiteralIdentifiers.TypeParameterList, language.GetTypeParameterList($"${LiteralIdentifiers.KeyType}$, ${LiteralIdentifiers.ValueType}$"));
                 snippet.AddLiteral(LiteralIdentifiers.KeyType, null, language.ObjectType.Keyword);
@@ -78,8 +78,11 @@ namespace Snippetica.CodeGeneration.Commands
                 snippet.RemoveLiteralAndPlaceholders(LiteralIdentifiers.TypeParameterList);
             }
 
-            if (!Tags.Contains(KnownTags.Arguments))
+            if (!Tags.Contains(KnownTags.Arguments)
+                && !(Type.IsReadOnly && Tags.Contains(KnownTags.Collection)))
+            {
                 snippet.RemoveLiteralAndPlaceholders(LiteralIdentifiers.Arguments);
+            }
 
             snippet.SetFileName(fileName + Path.GetFileName(snippet.FilePath));
 
@@ -98,14 +101,14 @@ namespace Snippetica.CodeGeneration.Commands
 
         private string GetInitializer(LanguageDefinition language)
         {
-            if (Tags.Contains(KnownTags.Array))
-                return language.GetArrayInitializer($"${LiteralIdentifiers.Value}$");
-
-            if (Tags.Contains(KnownTags.Dictionary))
+            if (Type.IsDictionary)
                 return language.GetDictionaryInitializer($"${LiteralIdentifiers.Value}$");
 
             if (Tags.Contains(KnownTags.Collection))
                 return language.GetCollectionInitializer($"${LiteralIdentifiers.Value}$");
+
+            if (Tags.Contains(KnownTags.Array))
+                return language.GetArrayInitializer($"${LiteralIdentifiers.Value}$");
 
             Debug.Fail("");
 

@@ -20,14 +20,6 @@ namespace Snippetica.CodeGeneration.Commands
             {
                 AddInitializer(context, snippet, language.GetArrayInitializer($"${LiteralIdentifiers.Value}$"), language.GetDefaultValue());
             }
-            else if (snippet.HasTag(KnownTags.Dictionary))
-            {
-                AddInitializer(context, snippet, language.GetDictionaryInitializer($"${LiteralIdentifiers.Value}$"), language.GetDefaultValue());
-            }
-            else if (snippet.HasTag(KnownTags.Collection))
-            {
-                AddInitializer(context, snippet, language.GetCollectionInitializer($"${LiteralIdentifiers.Value}$"), language.GetDefaultValue());
-            }
             else if (snippet.HasTag(KnownTags.Variable))
             {
                 AddInitializer(context, snippet, language.GetVariableInitializer($"${LiteralIdentifiers.Value}$"), language.GetDefaultValue());

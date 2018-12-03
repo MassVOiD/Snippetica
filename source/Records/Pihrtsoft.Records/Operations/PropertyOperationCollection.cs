@@ -13,14 +13,8 @@ namespace Pihrtsoft.Records.Operations
 
         public PropertyDefinition PropertyDefinition { get; }
 
-        public virtual string PropertyName
-        {
-            get { return PropertyDefinition.Name; }
-        }
+        public virtual string PropertyName => PropertyDefinition.Name;
 
-        string IKey<string>.GetKey()
-        {
-            return PropertyName;
-        }
+        string IKey<string>.GetKey() => PropertyName;
     }
 }

@@ -14,5 +14,6 @@ namespace Pihrtsoft.Records
         public const string Version = nameof(Version);
         public const string Separator = nameof(Separator);
         public const string Description = nameof(Description);
+        public const string Separators = nameof(Separators);
     }
 }

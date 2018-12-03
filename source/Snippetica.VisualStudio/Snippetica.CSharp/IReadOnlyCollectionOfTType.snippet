@@ -1,9 +1,9 @@
 ﻿<!--Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0.-->
 <CodeSnippet Format="1.1.0" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
   <Header>
-    <Title>is ImmutableStack&lt;T&gt; type</Title>
+    <Title>irc IReadOnlyCollection&lt;T&gt; type</Title>
     <Shortcut>x</Shortcut>
-    <Description>ImmutableStack&lt;T&gt; type</Description>
+    <Description>IReadOnlyCollection&lt;T&gt; type</Description>
     <Author>Josef Pihrt</Author>
     <SnippetTypes>
       <SnippetType>Expansion</SnippetType>
@@ -18,7 +18,7 @@
   <Snippet>
     <Imports>
       <Import>
-        <Namespace>System.Collections.Immutable</Namespace>
+        <Namespace>System.Collections.Generic</Namespace>
       </Import>
     </Imports>
     <Declarations>
@@ -27,6 +27,6 @@
         <Default>T</Default>
       </Literal>
     </Declarations>
-    <Code Language="CSharp"><![CDATA[ImmutableStack<$typeParameter$>$end$]]></Code>
+    <Code Language="CSharp"><![CDATA[IReadOnlyCollection<$typeParameter$>$end$]]></Code>
   </Snippet>
 </CodeSnippet>

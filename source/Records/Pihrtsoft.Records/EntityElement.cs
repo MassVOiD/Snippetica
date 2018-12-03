@@ -116,6 +116,7 @@ namespace Pihrtsoft.Records
                             bool isRequired = false;
                             string defaultValue = null;
                             string description = null;
+                            char[] separators = PropertyDefinition.Tags.SeparatorsArray;
 
                             foreach (XAttribute attribute in element.Attributes())
                             {
@@ -146,6 +147,11 @@ namespace Pihrtsoft.Records
                                             description = attribute.Value;
                                             break;
                                         }
+                                    case AttributeNames.Separators:
+                                        {
+                                            separators = ParseHelpers.ParseSeparators(attribute.Value);
+                                            break;
+                                        }
                                     default:
                                         {
                                             Throw(ErrorMessages.UnknownAttribute(attribute), element);
@@ -163,13 +169,16 @@ namespace Pihrtsoft.Records
                                 Throw(ErrorMessages.CollectionPropertyCannotDefineDefaultValue(), element);
                             }
 
+                            if (PropertyDefinition.IsReservedName(name))
+                                ThrowInvalidOperation(ErrorMessages.PropertyNameIsReserved(name), element);
+
                             var property = new PropertyDefinition(
                                 name,
                                 isCollection,
                                 isRequired,
                                 defaultValue,
                                 description,
-                                element);
+                                separators);
 
                             properties.Add(property);
                             break;

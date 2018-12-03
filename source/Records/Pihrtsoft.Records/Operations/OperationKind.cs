@@ -4,14 +4,9 @@ namespace Pihrtsoft.Records.Operations
 {
     internal enum OperationKind
     {
-        Set,
-        Add,
-        AddRange,
-        Remove,
-        RemoveRange,
-        Postfix,
-        PostfixMany,
-        Prefix,
-        PrefixMany,
+        With,
+        Without,
+        WithPrefix,
+        WithPostfix,
     }
 }

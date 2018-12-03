@@ -14,14 +14,9 @@ namespace Pihrtsoft.Records
         BaseRecords,
         Records,
         New,
-        Set,
-        Add,
-        AddRange,
-        Remove,
-        RemoveRange,
-        Postfix,
-        PostfixMany,
-        Prefix,
-        PrefixMany,
+        With,
+        Without,
+        WithPrefix,
+        WithPostfix,
     }
 }

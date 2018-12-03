@@ -1,9 +1,9 @@
 ﻿<!--Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0.-->
 <CodeSnippet Format="1.1.0" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
   <Header>
-    <Title>iea ImmutableArray(Of T) type</Title>
+    <Title>irl IReadOnlyList(Of T) type</Title>
     <Shortcut>x</Shortcut>
-    <Description>ImmutableArray(Of T) type</Description>
+    <Description>IReadOnlyList(Of T) type</Description>
     <Author>Josef Pihrt</Author>
     <SnippetTypes>
       <SnippetType>Expansion</SnippetType>
@@ -18,7 +18,7 @@
   <Snippet>
     <Imports>
       <Import>
-        <Namespace>System.Collections.Immutable</Namespace>
+        <Namespace>System.Collections.Generic</Namespace>
       </Import>
     </Imports>
     <Declarations>
@@ -27,6 +27,6 @@
         <Default>T</Default>
       </Literal>
     </Declarations>
-    <Code Language="VB"><![CDATA[ImmutableArray(Of $typeParameter$)$end$]]></Code>
+    <Code Language="VB"><![CDATA[IReadOnlyList(Of $typeParameter$)$end$]]></Code>
   </Snippet>
 </CodeSnippet>

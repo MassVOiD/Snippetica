@@ -13,14 +13,9 @@ namespace Pihrtsoft.Records
         public const string BaseRecords = nameof(BaseRecords);
         public const string Records = nameof(Records);
         public const string New = nameof(New);
-        public const string Set = nameof(Set);
-        public const string Add = nameof(Add);
-        public const string AddRange = nameof(AddRange);
-        public const string Remove = nameof(Remove);
-        public const string RemoveRange = nameof(RemoveRange);
-        public const string Postfix = nameof(Postfix);
-        public const string PostfixMany = nameof(PostfixMany);
-        public const string Prefix = nameof(Prefix);
-        public const string PrefixMany = nameof(PrefixMany);
+        public const string With = nameof(With);
+        public const string Without = nameof(Without);
+        public const string WithPrefix = nameof(WithPrefix);
+        public const string WithPostfix = nameof(WithPostfix);
     }
 }

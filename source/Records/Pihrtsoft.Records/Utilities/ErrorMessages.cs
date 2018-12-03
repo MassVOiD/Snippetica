@@ -106,5 +106,10 @@ namespace Pihrtsoft.Records.Utilities
         {
             return $"Command '{element.LocalName()}' cannot be used as a child command of 'New' command.";
         }
+
+        public static string InvalidSeparator(string separator)
+        {
+            return $"Invalid separator '{separator}'.";
+        }
     }
 }

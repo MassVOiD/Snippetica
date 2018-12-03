@@ -1,12 +1,33 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
+using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using Pihrtsoft.Records.Utilities;
+using static Pihrtsoft.Records.Utilities.ThrowHelper;
 
 namespace Pihrtsoft.Records
 {
-    internal static class AttributeValueParser
+    internal static class ParseHelpers
     {
-        public static string GetAttributeValue(string value, AbstractRecordReader reader)
+        private static readonly char[] _separatorsSeparator = new char[] { ' ' };
+
+        public static char[] ParseSeparators(string value, XObject @object = null)
+        {
+            return value
+                .Split(_separatorsSeparator, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s =>
+                {
+                    if (!char.TryParse(s, out char separator))
+                        ThrowInvalidOperation(ErrorMessages.InvalidSeparator(s), @object);
+
+                    return separator;
+                })
+                .ToArray();
+        }
+
+        public static string ParseAttributeValue(string value, AbstractRecordReader reader)
         {
             DocumentSettings settings = reader.Settings;
 

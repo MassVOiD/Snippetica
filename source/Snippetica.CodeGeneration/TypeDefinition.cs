@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Snippetica.CodeGeneration
 {
     [DebuggerDisplay("{Name,nq}")]
-    public  class TypeDefinition
+    public class TypeDefinition
     {
         public static TypeDefinition Default { get; } = new TypeDefinition(null, null, null, "a", null, null, null, 0, Array.Empty<string>());
 
@@ -50,6 +50,23 @@ namespace Snippetica.CodeGeneration
         public int Arity { get; }
 
         public ReadOnlyCollection<string> Tags { get; }
+
+        public bool IsDictionary => Name.EndsWith("Dictionary", StringComparison.Ordinal);
+
+        public bool IsReadOnly => Name.StartsWith("ReadOnly", StringComparison.Ordinal);
+
+        public bool IsImmutable => Name.StartsWith("Immutable", StringComparison.Ordinal);
+
+        public bool IsInterface
+        {
+            get
+            {
+                return Name.Length > 2
+                    && Name[0] == 'I'
+                    && char.IsUpper(Name[1])
+                    && char.IsLower(Name[2]);
+            }
+        }
 
         public bool HasTag(string tag)
         {

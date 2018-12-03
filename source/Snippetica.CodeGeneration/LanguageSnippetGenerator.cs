@@ -109,7 +109,6 @@ namespace Snippetica.CodeGeneration
             snippet.RemoveTag(KnownTags.GenerateDeclarationAndDefinition);
             snippet.RemoveTag(KnownTags.Array);
             snippet.RemoveTag(KnownTags.Collection);
-            snippet.RemoveTag(KnownTags.Dictionary);
             snippet.RemoveTag(KnownTags.Variable);
             snippet.RemoveTag(KnownTags.TryParse);
             snippet.RemoveTag(KnownTags.Initializer);

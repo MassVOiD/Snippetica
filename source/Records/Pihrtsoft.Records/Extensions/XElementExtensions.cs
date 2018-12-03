@@ -37,24 +37,14 @@ namespace Pihrtsoft.Records
                     return ElementKind.BaseRecords;
                 case ElementNames.New:
                     return ElementKind.New;
-                case ElementNames.Set:
-                    return ElementKind.Set;
-                case ElementNames.Add:
-                    return ElementKind.Add;
-                case ElementNames.AddRange:
-                    return ElementKind.AddRange;
-                case ElementNames.Remove:
-                    return ElementKind.Remove;
-                case ElementNames.RemoveRange:
-                    return ElementKind.RemoveRange;
-                case ElementNames.Postfix:
-                    return ElementKind.Postfix;
-                case ElementNames.PostfixMany:
-                    return ElementKind.PostfixMany;
-                case ElementNames.Prefix:
-                    return ElementKind.Prefix;
-                case ElementNames.PrefixMany:
-                    return ElementKind.PrefixMany;
+                case ElementNames.With:
+                    return ElementKind.With;
+                case ElementNames.Without:
+                    return ElementKind.Without;
+                case ElementNames.WithPrefix:
+                    return ElementKind.WithPrefix;
+                case ElementNames.WithPostfix:
+                    return ElementKind.WithPostfix;
                 default:
                     {
                         Debug.Assert(false, element.ToString());

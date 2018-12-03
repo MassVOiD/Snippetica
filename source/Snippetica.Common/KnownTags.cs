@@ -12,7 +12,6 @@ namespace Snippetica
         public const string BasicType = nameof(BasicType);
         public const string Collection = nameof(Collection);
         public const string Default = nameof(Default);
-        public const string Dictionary = nameof(Dictionary);
         public const string Disabled = nameof(Disabled);
         public const string Environment = nameof(Environment);
         public const string ExcludeFromReadme = nameof(ExcludeFromReadme);
@@ -20,9 +19,7 @@ namespace Snippetica
         public const string ExcludeFromVisualStudio = nameof(ExcludeFromVisualStudio);
         public const string ExcludeFromVisualStudioCode = nameof(ExcludeFromVisualStudioCode);
         public const string GenerateXmlSnippets = nameof(GenerateXmlSnippets);
-        public const string Immutable = nameof(Immutable);
         public const string Initializer = nameof(Initializer);
-        public const string Interface = nameof(Interface);
         public const string Language = nameof(Language);
         public const string NonUniqueShortcut = nameof(NonUniqueShortcut);
         public const string NonUniqueTitle = nameof(NonUniqueTitle);
