@@ -17,20 +17,11 @@ namespace Snippetica.CodeGeneration.Commands
 
         public TypeDefinition Type { get; }
 
-        public ReadOnlyCollection<string> Tags
-        {
-            get { return Type.Tags; }
-        }
+        public ReadOnlyCollection<string> Tags => Type.Tags;
 
-        public override CommandKind Kind
-        {
-            get { return CommandKind.Type; }
-        }
+        public override CommandKind Kind => CommandKind.Type;
 
-        public override Command ChildCommand
-        {
-            get { return (Type != null) ? new PrefixTitleCommand(Type) : null; }
-        }
+        public override Command ChildCommand => (Type != null) ? new PrefixTitleCommand(Type) : null;
 
         protected override void Execute(ExecutionContext context, Snippet snippet)
         {

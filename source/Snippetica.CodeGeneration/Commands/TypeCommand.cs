@@ -13,10 +13,7 @@ namespace Snippetica.CodeGeneration.Commands
         {
         }
 
-        public override CommandKind Kind
-        {
-            get { return CommandKind.Collection; }
-        }
+        public override CommandKind Kind => CommandKind.Collection;
 
         protected override void Execute(ExecutionContext context, Snippet snippet)
         {

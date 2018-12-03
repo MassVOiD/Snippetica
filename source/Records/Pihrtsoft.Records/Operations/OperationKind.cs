@@ -6,7 +6,7 @@ namespace Pihrtsoft.Records.Operations
     {
         With,
         Without,
-        WithPrefix,
-        WithPostfix,
+        Prefix,
+        Postfix,
     }
 }

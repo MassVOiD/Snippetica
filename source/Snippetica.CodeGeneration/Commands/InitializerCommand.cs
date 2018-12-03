@@ -1,16 +1,12 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Diagnostics;
 using Pihrtsoft.Snippets;
 
 namespace Snippetica.CodeGeneration.Commands
 {
     public class InitializerCommand : SnippetCommand
     {
-        public override CommandKind Kind
-        {
-            get { return CommandKind.Initializer; }
-        }
+        public override CommandKind Kind => CommandKind.Initializer;
 
         protected override void Execute(ExecutionContext context, Snippet snippet)
         {

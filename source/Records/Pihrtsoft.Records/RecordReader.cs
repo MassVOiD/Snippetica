@@ -9,15 +9,15 @@ namespace Pihrtsoft.Records
 {
     internal class RecordReader : AbstractRecordReader
     {
-        public RecordReader(XElement element, EntityDefinition entity, DocumentSettings settings, IEnumerable<Record> baseRecords = null)
+        public RecordReader(XElement element, EntityDefinition entity, DocumentSettings settings, IEnumerable<Record> withRecords = null)
             : base(element, entity, settings)
         {
-            BaseRecords = (baseRecords != null)
-                ? new BaseRecordCollection(baseRecords)
-                : Empty.BaseRecordCollection;
+            WithRecords = (withRecords != null)
+                ? new WithRecordCollection(withRecords)
+                : Empty.WithRecordCollection;
         }
 
-        public BaseRecordCollection BaseRecords { get; }
+        public WithRecordCollection WithRecords { get; }
 
         private Collection<Record> Records { get; set; }
 
@@ -40,9 +40,9 @@ namespace Pihrtsoft.Records
 
         protected override Record CreateRecord(string id)
         {
-            if (id != null && BaseRecords != null)
+            if (id != null && WithRecords != null)
             {
-                Record record = BaseRecords.Find(id);
+                Record record = WithRecords.Find(id);
 
                 if (record != null)
                     return record.WithEntity(Entity);

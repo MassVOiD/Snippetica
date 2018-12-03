@@ -7,12 +7,10 @@ namespace Pihrtsoft.Records
         public const string Name = nameof(Name);
         public const string Value = nameof(Value);
         public const string Id = nameof(Id);
-        public const string Tags = nameof(Tags);
         public const string DefaultValue = nameof(DefaultValue);
         public const string IsCollection = nameof(IsCollection);
         public const string IsRequired = nameof(IsRequired);
         public const string Version = nameof(Version);
-        public const string Separator = nameof(Separator);
         public const string Description = nameof(Description);
         public const string Separators = nameof(Separators);
     }

@@ -11,12 +11,11 @@ namespace Pihrtsoft.Records
         Declarations,
         Variable,
         Property,
-        BaseRecords,
         Records,
         New,
         With,
         Without,
-        WithPrefix,
-        WithPostfix,
+        Prefix,
+        Postfix,
     }
 }

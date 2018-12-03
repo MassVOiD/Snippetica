@@ -29,8 +29,8 @@ namespace Snippetica.CodeGeneration
             {
                 commands.AddMultiCommands(new Command[]
                 {
-                    CommandUtility.Declaration,
-                    CommandUtility.Definition
+                    CommandUtility.DeclarationCommand,
+                    CommandUtility.DefinitionCommand
                 });
             }
 

@@ -16,7 +16,7 @@ namespace Pihrtsoft.Records
             EntityDefinition baseEntity = null,
             ExtendedKeyedCollection<string, PropertyDefinition> properties = null,
             ExtendedKeyedCollection<string, Variable> variables = null)
-            : this(element, element.AttributeValueOrThrow(AttributeNames.Name), baseEntity, properties, variables)
+            : this(element, element.GetAttributeValueOrThrow(AttributeNames.Name), baseEntity, properties, variables)
         {
         }
 

@@ -38,18 +38,14 @@
   <ItemGroup>
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Operations\Operation.cs" />
     <Compile Include="Operations\OperationKind.cs" />
-    <Compile Include="Operations\IPropertyOperation.cs" />
     <Compile Include="AbstractRecordReader.cs" />
     <Compile Include="Extensions\QueueExtensions.cs" />
     <Compile Include="Document.cs" />
-    <Compile Include="BaseRecordReader.cs" />
-    <Compile Include="BaseRecordCollection.cs" />
+    <Compile Include="WithRecordReader.cs" />
+    <Compile Include="WithRecordCollection.cs" />
     <Compile Include="Extensions\XContainerExtensions.cs" />
-    <Compile Include="Operations\WithOperation.cs" />
-    <Compile Include="Operations\WithoutOperation.cs" />
-    <Compile Include="Operations\WithPostfixOperation.cs" />
-    <Compile Include="Operations\WithPrefixOperation.cs" />
     <Compile Include="ParseHelpers.cs" />
     <Compile Include="RecordCollection.cs" />
     <Compile Include="Utilities\DefaultComparer.cs" />

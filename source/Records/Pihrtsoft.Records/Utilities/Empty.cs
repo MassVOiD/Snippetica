@@ -10,7 +10,7 @@ namespace Pihrtsoft.Records.Utilities
 
         public static VariableCollection VariableCollection { get; } = new VariableCollection(Array<Variable>());
 
-        public static BaseRecordCollection BaseRecordCollection { get; } = new BaseRecordCollection(Array<Record>());
+        public static WithRecordCollection WithRecordCollection { get; } = new WithRecordCollection(Array<Record>());
 
         public static RecordCollection RecordCollection { get; } = new RecordCollection(Array<Record>());
 

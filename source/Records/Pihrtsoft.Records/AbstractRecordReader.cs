@@ -26,8 +26,7 @@ namespace Pihrtsoft.Records
         private XElement Current { get; set; }
         private int Depth { get; set; } = -1;
 
-        //TODO: OperationsByProperty
-        private StringKeyedCollection<PropertyOperationCollection> Operations { get; set; }
+        private StringKeyedCollection<PropertyOperationCollection> PropertyOperations { get; set; }
 
         private Stack<Variable> Variables { get; set; }
 
@@ -57,8 +56,8 @@ namespace Pihrtsoft.Records
                         }
                     case ElementKind.With:
                     case ElementKind.Without:
-                    case ElementKind.WithPostfix:
-                    case ElementKind.WithPrefix:
+                    case ElementKind.Postfix:
+                    case ElementKind.Prefix:
                         {
                             if (element.HasElements)
                             {
@@ -95,14 +94,14 @@ namespace Pihrtsoft.Records
 
         private void PushOperations(XElement element)
         {
-            foreach (IPropertyOperation operation in CreateOperationsFromElement(element))
+            foreach (Operation operation in CreateOperationsFromElement(element))
             {
-                Operations = Operations ?? new StringKeyedCollection<PropertyOperationCollection>();
+                PropertyOperations = PropertyOperations ?? new StringKeyedCollection<PropertyOperationCollection>();
 
-                if (!Operations.TryGetValue(operation.PropertyName, out PropertyOperationCollection propertyOperations))
+                if (!PropertyOperations.TryGetValue(operation.PropertyName, out PropertyOperationCollection propertyOperations))
                 {
                     propertyOperations = new PropertyOperationCollection(operation.PropertyDefinition);
-                    Operations.Add(propertyOperations);
+                    PropertyOperations.Add(propertyOperations);
                 }
 
                 propertyOperations.Add(operation);
@@ -111,9 +110,9 @@ namespace Pihrtsoft.Records
 
         private void PopOperations()
         {
-            for (int i = 0; i < Operations.Count; i++)
+            for (int i = 0; i < PropertyOperations.Count; i++)
             {
-                PropertyOperationCollection propertyOperations = Operations[i];
+                PropertyOperationCollection propertyOperations = PropertyOperations[i];
 
                 for (int j = propertyOperations.Count - 1; j >= 0; j--)
                 {
@@ -125,8 +124,8 @@ namespace Pihrtsoft.Records
 
         private void AddVariable(XElement element)
         {
-            string name = element.AttributeValueOrThrow(AttributeNames.Name);
-            string value = element.AttributeValueOrThrow(AttributeNames.Value);
+            string name = element.GetAttributeValueOrThrow(AttributeNames.Name);
+            string value = element.GetAttributeValueOrThrow(AttributeNames.Value);
 
             (Variables ?? (Variables = new Stack<Variable>())).Push(new Variable(name, value));
         }
@@ -135,7 +134,7 @@ namespace Pihrtsoft.Records
         {
             string id = null;
 
-            Collection<IPropertyOperation> operations = null;
+            Collection<Operation> operations = null;
 
             foreach (XAttribute attribute in element.Attributes())
             {
@@ -145,9 +144,9 @@ namespace Pihrtsoft.Records
                 }
                 else
                 {
-                    IPropertyOperation operation = CreateOperationFromAttribute(element, ElementKind.New, attribute);
+                    Operation operation = CreateOperationFromAttribute(element, ElementKind.New, attribute);
 
-                    (operations ?? (operations = new Collection<IPropertyOperation>())).Add(operation);
+                    (operations ?? (operations = new Collection<Operation>())).Add(operation);
                 }
             }
 
@@ -193,18 +192,19 @@ namespace Pihrtsoft.Records
 
         private void ExecutePendingOperations(Record record)
         {
-            if (Operations == null)
+            if (PropertyOperations == null)
                 return;
 
-            foreach (PropertyOperationCollection propertyOperations in Operations)
+            foreach (PropertyOperationCollection propertyOperations in PropertyOperations)
             {
                 Dictionary<OperationKind, string> pendingValues = null;
 
-                foreach (IPropertyOperation operation in propertyOperations)
+                foreach (Operation operation in propertyOperations)
                 {
                     OperationKind kind = operation.Kind;
 
-                    if (operation.SupportsExecute)
+                    if (kind == OperationKind.With
+                        || kind == OperationKind.Without)
                     {
                         operation.Execute(record);
 
@@ -217,7 +217,7 @@ namespace Pihrtsoft.Records
 
                         if (pendingValues.TryGetValue(kind, out string value))
                         {
-                            Debug.Assert(kind == OperationKind.WithPrefix || kind == OperationKind.WithPostfix, kind.ToString());
+                            Debug.Assert(kind == OperationKind.Prefix || kind == OperationKind.Postfix, kind.ToString());
 
                             pendingValues[kind] += operation.Value;
                         }
@@ -240,7 +240,7 @@ namespace Pihrtsoft.Records
                 {
                     OperationKind kind = kvp.Key;
 
-                    if (kind == OperationKind.WithPostfix)
+                    if (kind == OperationKind.Postfix)
                     {
                         if (propertyDefinition.IsCollection)
                         {
@@ -255,7 +255,7 @@ namespace Pihrtsoft.Records
                             record[name] += kvp.Value;
                         }
                     }
-                    else if (kind == OperationKind.WithPrefix)
+                    else if (kind == OperationKind.Prefix)
                     {
                         if (propertyDefinition.IsCollection)
                         {
@@ -280,12 +280,11 @@ namespace Pihrtsoft.Records
             }
         }
 
-        private IPropertyOperation CreateOperationFromAttribute(
+        private Operation CreateOperationFromAttribute(
             XElement element,
             ElementKind kind,
             XAttribute attribute,
-            bool throwOnId = false,
-            bool throwOnCollection = false)
+            bool throwOnId = false)
         {
             string attributeName = attribute.LocalName();
 
@@ -308,29 +307,29 @@ namespace Pihrtsoft.Records
                 property = GetProperty(attribute);
             }
 
-            if (throwOnCollection
-                && property.IsCollection)
-            {
-                Throw(ErrorMessages.CannotUseOperationOnCollectionProperty(element, property.Name));
-            }
-
             switch (kind)
             {
                 case ElementKind.With:
-                    return new WithOperation(property, GetValue(attribute), Depth);
+                    {
+                        return new Operation(property, GetValue(attribute), Depth, OperationKind.With);
+                    }
                 case ElementKind.Without:
-                    return new WithoutOperation(property, GetValue(attribute), Depth);
+                    {
+                        if (!property.IsCollection)
+                            Throw(ErrorMessages.CannotUseOperationOnNonCollectionProperty(element, property.Name));
+
+                        return new Operation(property, GetValue(attribute), Depth, OperationKind.Without);
+                    }
                 default:
                     {
                         Debug.Assert(kind == ElementKind.New, kind.ToString());
 
-                        return new WithOperation(property, GetValue(attribute), Depth);
+                        return new Operation(property, GetValue(attribute), Depth, OperationKind.With);
                     }
             }
         }
 
-        //TODO: throwOnMultiCommand?
-        private IEnumerable<IPropertyOperation> CreateOperationsFromElement(XElement element)
+        private IEnumerable<Operation> CreateOperationsFromElement(XElement element)
         {
             Debug.Assert(element.HasAttributes, element.ToString());
 
@@ -371,17 +370,17 @@ namespace Pihrtsoft.Records
 
                         break;
                     }
-                case ElementKind.WithPostfix:
+                case ElementKind.Postfix:
                     {
                         foreach (XAttribute attribute in element.Attributes())
-                            yield return new WithPostfixOperation(GetProperty(attribute), GetValue(attribute), Depth);
+                            yield return new Operation(GetProperty(attribute), GetValue(attribute), Depth, OperationKind.Postfix);
 
                         break;
                     }
-                case ElementKind.WithPrefix:
+                case ElementKind.Prefix:
                     {
                         foreach (XAttribute attribute in element.Attributes())
-                            yield return new WithPrefixOperation(GetProperty(attribute), GetValue(attribute), Depth);
+                            yield return new Operation(GetProperty(attribute), GetValue(attribute), Depth, OperationKind.Prefix);
 
                         break;
                     }

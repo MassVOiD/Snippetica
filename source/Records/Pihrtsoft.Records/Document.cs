@@ -11,7 +11,7 @@ using static Pihrtsoft.Records.Utilities.ThrowHelper;
 
 namespace Pihrtsoft.Records
 {
-    public class Document
+    public sealed class Document
     {
         private Document(XDocument document, DocumentSettings settings)
         {

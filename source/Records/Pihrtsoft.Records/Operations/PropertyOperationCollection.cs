@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace Pihrtsoft.Records.Operations
 {
-    internal class PropertyOperationCollection : Collection<IPropertyOperation>, IKey<string>
+    internal class PropertyOperationCollection : Collection<Operation>, IKey<string>
     {
         public PropertyOperationCollection(PropertyDefinition propertyDefinition)
         {

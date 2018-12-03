@@ -7,7 +7,7 @@
         <Property Name="Language" IsRequired="true" />
       </Declarations>
       <Records>
-        <WithPrefix Path="..\..\..\..\Snippetica\Snippetica">
+        <Prefix Path="..\..\..\..\Snippetica\Snippetica">
           <With Language="CSharp">
             <New Path=".CSharp" />
           </With>
@@ -27,13 +27,13 @@
             <New Path=".Xml" Tags="GenerateXmlSnippets" />
             <New Path=".Xml.CodeSnippet" Tags="NoQuickReference,ExcludeFromVisualStudioCode" />
           </With>
-            <With Language="Markdown">
-              <New Path=".Markdown" Tags="GenerateXmlSnippets,ExcludeFromVisualStudio" />
-            </With>
-            <With Language="Json">
-              <New Path=".Json" Tags="ExcludeFromVisualStudio" />
-            </With>
-        </WithPrefix>
+          <With Language="Markdown">
+            <New Path=".Markdown" Tags="GenerateXmlSnippets,ExcludeFromVisualStudio" />
+          </With>
+          <With Language="Json">
+            <New Path=".Json" Tags="ExcludeFromVisualStudio" />
+          </With>
+        </Prefix>
       </Records>
     </Entity>
   </Entities>

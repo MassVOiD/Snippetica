@@ -6,9 +6,9 @@ using Pihrtsoft.Records.Utilities;
 
 namespace Pihrtsoft.Records
 {
-    internal class BaseRecordReader : AbstractRecordReader
+    internal class WithRecordReader : AbstractRecordReader
     {
-        public BaseRecordReader(XElement element, EntityDefinition entity, DocumentSettings settings)
+        public WithRecordReader(XElement element, EntityDefinition entity, DocumentSettings settings)
             : base(element, entity, settings)
         {
         }
@@ -39,7 +39,7 @@ namespace Pihrtsoft.Records
         protected override Record CreateRecord(string id)
         {
             if (id == null)
-                Throw(ErrorMessages.MissingBaseRecordIdentifier());
+                Throw(ErrorMessages.MissingWithRecordIdentifier());
 
             return new Record(Entity, id);
         }

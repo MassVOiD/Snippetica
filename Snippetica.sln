@@ -95,7 +95,6 @@ Global
 		{A8ED9945-2D2B-493C-ABB6-E860315EAFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8ED9945-2D2B-493C-ABB6-E860315EAFFF}.ReleaseVisualStudio|Any CPU.ActiveCfg = Release|Any CPU
 		{1D137DD7-218D-4DAC-AB1A-E4F3CE95D788}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D137DD7-218D-4DAC-AB1A-E4F3CE95D788}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D137DD7-218D-4DAC-AB1A-E4F3CE95D788}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D137DD7-218D-4DAC-AB1A-E4F3CE95D788}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1D137DD7-218D-4DAC-AB1A-E4F3CE95D788}.ReleaseVisualStudio|Any CPU.ActiveCfg = Release|Any CPU

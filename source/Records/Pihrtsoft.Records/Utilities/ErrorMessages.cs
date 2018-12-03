@@ -42,9 +42,9 @@ namespace Pihrtsoft.Records.Utilities
             return $"Element '{element.Parent?.LocalName()}' cannot contains multiple elements with name '{element.LocalName()}'.";
         }
 
-        public static string MissingBaseRecordIdentifier()
+        public static string MissingWithRecordIdentifier()
         {
-            return $"Base record must define attribute '{PropertyDefinition.IdName}'.";
+            return $"Record must define attribute '{PropertyDefinition.IdName}'.";
         }
 
         public static string ItemAlreadyDefined(string propertyName, string name)

@@ -9,18 +9,16 @@
       </Declarations>
       <Entities>
         <Entity Name="Modifier">
-          <BaseRecords>
+          <With>
             <With Tags="AccessModifier">
               <New Id="Public" Shortcut="" Tags="Default" />
               <New Id="Internal" Shortcut="i" />
               <New Id="Private" Shortcut="p" />
-              <With Tags="Disabled">
-                <New Id="Protected" Shortcut="d" />
-              </With>
+              <New Id="Protected" Shortcut="d" Tags="Disabled" />
             </With>
             <New Id="Static" Shortcut="s" />
             <New Id="Virtual" Shortcut="v" />
-          </BaseRecords>
+          </With>
           <Records>
             <With Language="CSharp">
               <New Id="Public" Keyword="public" />
@@ -54,7 +52,7 @@
             <Property Name="DefaultIdentifier" />
             <Property Name="Namespace" />
           </Declarations>
-          <BaseRecords>
+          <With>
             <With Tags="BasicType">
               <New Id="This" Shortcut="t" />
               <New Id="Void" Shortcut="-" />
@@ -73,7 +71,7 @@
                 </With>
               </With>
             </With>
-          </BaseRecords>
+          </With>
           <Records>
             <With Language="CSharp">
               <New Id="This" Title="this" Keyword="this" DefaultValue="null" />

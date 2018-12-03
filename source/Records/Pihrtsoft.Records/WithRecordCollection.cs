@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace Pihrtsoft.Records
 {
-    internal class BaseRecordCollection : ReadOnlyKeyedCollection<string, Record>
+    internal class WithRecordCollection : ReadOnlyKeyedCollection<string, Record>
     {
-        public BaseRecordCollection(IEnumerable<Record> records)
+        public WithRecordCollection(IEnumerable<Record> records)
             : this(new List<Record>(records))
         {
         }
 
-        public BaseRecordCollection(IList<Record> list)
+        public WithRecordCollection(IList<Record> list)
             : base(list)
         {
         }

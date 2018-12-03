@@ -10,12 +10,11 @@ namespace Pihrtsoft.Records
         public const string Declarations = nameof(Declarations);
         public const string Property = nameof(Property);
         public const string Variable = nameof(Variable);
-        public const string BaseRecords = nameof(BaseRecords);
         public const string Records = nameof(Records);
         public const string New = nameof(New);
         public const string With = nameof(With);
         public const string Without = nameof(Without);
-        public const string WithPrefix = nameof(WithPrefix);
-        public const string WithPostfix = nameof(WithPostfix);
+        public const string Prefix = nameof(Prefix);
+        public const string Postfix = nameof(Postfix);
     }
 }

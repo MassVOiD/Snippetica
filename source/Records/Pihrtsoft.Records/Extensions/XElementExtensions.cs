@@ -10,11 +10,6 @@ namespace Pihrtsoft.Records
 {
     internal static class XElementExtensions
     {
-        public static bool IsKind(this XElement element, ElementKind kind)
-        {
-            return element.Kind() == kind;
-        }
-
         public static ElementKind Kind(this XElement element)
         {
             switch (element.LocalName())
@@ -33,18 +28,16 @@ namespace Pihrtsoft.Records
                     return ElementKind.Variable;
                 case ElementNames.Records:
                     return ElementKind.Records;
-                case ElementNames.BaseRecords:
-                    return ElementKind.BaseRecords;
                 case ElementNames.New:
                     return ElementKind.New;
                 case ElementNames.With:
                     return ElementKind.With;
                 case ElementNames.Without:
                     return ElementKind.Without;
-                case ElementNames.WithPrefix:
-                    return ElementKind.WithPrefix;
-                case ElementNames.WithPostfix:
-                    return ElementKind.WithPostfix;
+                case ElementNames.Prefix:
+                    return ElementKind.Prefix;
+                case ElementNames.Postfix:
+                    return ElementKind.Postfix;
                 default:
                     {
                         Debug.Assert(false, element.ToString());
@@ -58,12 +51,7 @@ namespace Pihrtsoft.Records
             return element.Name.LocalName;
         }
 
-        public static string AttributeValue(this XElement element, string attributeName)
-        {
-            return element.Attribute(attributeName).Value;
-        }
-
-        public static string AttributeValueOrThrow(this XElement element, string attributeName)
+        public static string GetAttributeValueOrThrow(this XElement element, string attributeName)
         {
             XAttribute attribute = element.Attribute(attributeName);
 
@@ -73,7 +61,7 @@ namespace Pihrtsoft.Records
             return attribute.Value;
         }
 
-        public static XAttribute SingleAttributeOrThrow(this XElement element, string attributeName = null)
+        public static XAttribute GetSingleAttributeOrThrow(this XElement element, string attributeName = null)
         {
             using (IEnumerator<XAttribute> en = element.Attributes().GetEnumerator())
             {

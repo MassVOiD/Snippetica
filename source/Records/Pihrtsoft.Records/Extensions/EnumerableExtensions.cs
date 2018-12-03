@@ -7,9 +7,9 @@ namespace Pihrtsoft.Records
 {
     internal static class EnumerableExtensions
     {
-        public static void ExecuteAll(this IEnumerable<IPropertyOperation> propertyOperations, Record record)
+        public static void ExecuteAll(this IEnumerable<Operation> propertyOperations, Record record)
         {
-            foreach (IPropertyOperation propertyOperation in propertyOperations)
+            foreach (Operation propertyOperation in propertyOperations)
                 propertyOperation.Execute(record);
         }
     }

@@ -12,7 +12,7 @@ namespace Pihrtsoft.Records
     internal class EntityElement
     {
         private XElement _declarationsElement;
-        private XElement _baseRecordsElement;
+        private XElement _withElement;
         private XElement _recordsElement;
         private XElement _entitiesElement;
 
@@ -49,12 +49,12 @@ namespace Pihrtsoft.Records
                             _declarationsElement = element;
                             break;
                         }
-                    case ElementKind.BaseRecords:
+                    case ElementKind.With:
                         {
-                            if (_baseRecordsElement != null)
+                            if (_withElement != null)
                                 ThrowOnMultipleElementsWithEqualName(element);
 
-                            _baseRecordsElement = element;
+                            _withElement = element;
                             break;
                         }
                     case ElementKind.Records:
@@ -95,14 +95,14 @@ namespace Pihrtsoft.Records
                         {
                             variables = variables ?? new ExtendedKeyedCollection<string, Variable>(DefaultComparer.StringComparer);
 
-                            string variableName = element.AttributeValueOrThrow(AttributeNames.Name);
+                            string variableName = element.GetAttributeValueOrThrow(AttributeNames.Name);
 
                             if (variables.Contains(variableName))
                                 Throw(ErrorMessages.ItemAlreadyDefined(ElementNames.Variable, variableName), element);
 
                             var variable = new Variable(
                                 variableName,
-                                element.AttributeValueOrThrow(AttributeNames.Value));
+                                element.GetAttributeValueOrThrow(AttributeNames.Value));
 
                             variables.Add(variable);
                             break;
@@ -192,12 +192,12 @@ namespace Pihrtsoft.Records
             }
         }
 
-        private Collection<Record> ReadBaseRecords()
+        private Collection<Record> ReadWith()
         {
-            if (_baseRecordsElement == null)
+            if (_withElement == null)
                 return null;
 
-            var reader = new BaseRecordReader(_baseRecordsElement, Entity, Settings);
+            var reader = new WithRecordReader(_withElement, Entity, Settings);
 
             Collection<Record> records = reader.ReadRecords();
 
@@ -212,7 +212,7 @@ namespace Pihrtsoft.Records
             if (_recordsElement == null)
                 return null;
 
-            var reader = new RecordReader(_recordsElement, Entity, Settings, ReadBaseRecords());
+            var reader = new RecordReader(_recordsElement, Entity, Settings, ReadWith());
 
             return reader.ReadRecords();
         }

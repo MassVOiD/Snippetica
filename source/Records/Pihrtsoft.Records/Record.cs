@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Pihrtsoft.Records.Utilities;
 
 namespace Pihrtsoft.Records
 {
@@ -64,11 +63,6 @@ namespace Pihrtsoft.Records
         public bool ContainsProperty(string propertyName)
         {
             return Properties.ContainsKey(propertyName);
-        }
-
-        internal object GetValue(string propertyName)
-        {
-            return Properties[propertyName];
         }
 
         internal bool TryGetValue(string propertyName, out object value)
