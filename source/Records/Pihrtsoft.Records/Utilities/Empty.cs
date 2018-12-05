@@ -13,8 +13,6 @@ namespace Pihrtsoft.Records.Utilities
 
         public static WithRecordCollection WithRecordCollection { get; } = new WithRecordCollection(Array.Empty<Record>());
 
-        public static RecordCollection RecordCollection { get; } = new RecordCollection(Array.Empty<Record>());
-
         public static ReadOnlyCollection<T> ReadOnlyCollection<T>()
         {
             return Empty<T>.ReadOnlyCollection;

@@ -7,7 +7,7 @@ using System.Xml.Linq;
 using Pihrtsoft.Records.Utilities;
 using static Pihrtsoft.Records.Utilities.ThrowHelper;
 
-namespace Pihrtsoft.Records
+namespace Pihrtsoft.Records.Xml
 {
     internal static class ParseHelpers
     {
@@ -27,7 +27,7 @@ namespace Pihrtsoft.Records
                 .ToArray();
         }
 
-        public static string ParseAttributeValue(string value, AbstractRecordReader reader)
+        public static string ParseAttributeValue(string value, RecordReader reader)
         {
             DocumentOptions options = reader.Options;
 
@@ -96,7 +96,7 @@ namespace Pihrtsoft.Records
 
                                 Variable variable = reader.FindVariable(variableName);
 
-                                if (variable == null)
+                                if (variable.IsDefault)
                                     Throw.VariableIsNotDefined(value, variableName);
 
                                 sb.Append(value, lastEndIndex, startIndex - lastEndIndex);

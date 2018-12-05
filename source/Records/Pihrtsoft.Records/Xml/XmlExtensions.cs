@@ -3,13 +3,24 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml.Linq;
 using Pihrtsoft.Records.Utilities;
 
-namespace Pihrtsoft.Records
+namespace Pihrtsoft.Records.Xml
 {
-    internal static class XElementExtensions
+    internal static class XmlExtensions
     {
+        public static string LocalName(this XAttribute attribute)
+        {
+            return attribute.Name.LocalName;
+        }
+
+        public static XElement FirstElement(this XContainer container)
+        {
+            return container.Elements().FirstOrDefault();
+        }
+
         public static ElementKind Kind(this XElement element)
         {
             switch (element.LocalName())

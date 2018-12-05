@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Pihrtsoft.Records.Utilities
+namespace Pihrtsoft.Records
 {
     internal class ExtendedKeyedCollection<TKey, TItem> : KeyedCollection<TKey, TItem> where TItem : IKey<TKey>
     {

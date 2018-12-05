@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Pihrtsoft.Records.Operations
+namespace Pihrtsoft.Records
 {
-    [DebuggerDisplay("{Kind} {PropertyName,nq} = {Value,nq}")]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     internal struct Operation
     {
         public Operation(PropertyDefinition propertyDefinition, string value, int depth, OperationKind kind)
@@ -26,6 +26,12 @@ namespace Pihrtsoft.Records.Operations
         public OperationKind Kind { get; }
 
         public string PropertyName => PropertyDefinition.Name;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay
+        {
+            get { return $"{Kind} {PropertyName} = {Value}"; }
+        }
 
         public void Execute(Record record)
         {

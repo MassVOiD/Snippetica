@@ -2,7 +2,7 @@
 
 using System.Collections.ObjectModel;
 
-namespace Pihrtsoft.Records.Operations
+namespace Pihrtsoft.Records
 {
     internal class PropertyOperationCollection : Collection<Operation>, IKey<string>
     {

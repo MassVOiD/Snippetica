@@ -10,7 +10,7 @@ using System.Xml.Linq;
 using Pihrtsoft.Records.Utilities;
 using static Pihrtsoft.Records.Utilities.ThrowHelper;
 
-namespace Pihrtsoft.Records
+namespace Pihrtsoft.Records.Xml
 {
     internal class XmlRecordReader
     {
@@ -107,13 +107,15 @@ namespace Pihrtsoft.Records
                     if (_declarationsElement != null)
                         ScanDeclarations(out properties, out variables);
 
-                    _entityDefinition = new EntityDefinition(_entityElement, baseEntity: entities.BaseEntity, properties, variables);
+                    _entityDefinition = CreateEntityDefinition(_entityElement, baseEntity: entities.BaseEntity, properties, variables);
 
                     if (_recordsElement != null)
                     {
-                        var reader = new RecordReader(_recordsElement, _entityDefinition, Options, ReadWithRecords());
+                        var reader = new RecordReader(_entityDefinition, Options);
 
-                        Records.AddRange(reader.ReadRecords());
+                        reader.ReadRecords(_recordsElement, _withElement);
+
+                        Records.AddRange(reader.Records);
                     }
 
                     if (_childEntitiesElement != null)
@@ -286,19 +288,25 @@ namespace Pihrtsoft.Records
             }
         }
 
-        private Collection<Record> ReadWithRecords()
+        private static EntityDefinition CreateEntityDefinition(
+            XElement element,
+            EntityDefinition baseEntity = null,
+            ExtendedKeyedCollection<string, PropertyDefinition> properties = null,
+            ExtendedKeyedCollection<string, Variable> variables = null)
         {
-            if (_withElement == null)
-                return null;
+            string name = element.GetAttributeValueOrThrow(AttributeNames.Name);
 
-            var reader = new WithRecordReader(_withElement, _entityDefinition, Options);
+            if (baseEntity != null
+                && properties != null)
+            {
+                foreach (PropertyDefinition property in properties)
+                {
+                    if (baseEntity.FindProperty(property.Name) != null)
+                        ThrowInvalidOperation(ErrorMessages.PropertyAlreadyDefined(property.Name, name), element);
+                }
+            }
 
-            Collection<Record> records = reader.ReadRecords();
-
-            if (records == null)
-                return null;
-
-            return new ExtendedKeyedCollection<string, Record>(records.ToArray(), DefaultComparer.StringComparer);
+            return new EntityDefinition(name, baseEntity ?? EntityDefinition.Global, properties, variables);
         }
 
         private static void Throw(string message, XObject @object)

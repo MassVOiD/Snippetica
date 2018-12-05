@@ -8,7 +8,7 @@ using Pihrtsoft.Records.Utilities;
 namespace Pihrtsoft.Records
 {
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public class PropertyDefinition : IKey<string>
+    public sealed class PropertyDefinition : IKey<string>
     {
         internal PropertyDefinition(
             string name,

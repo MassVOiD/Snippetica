@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Pihrtsoft.Records.Utilities
+namespace Pihrtsoft.Records
 {
     internal class StringKeyedCollection<TValue> : ExtendedKeyedCollection<string, TValue> where TValue : IKey<string>
     {

@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Immutable;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using Pihrtsoft.Records.Xml;
 
 namespace Pihrtsoft.Records
 {
@@ -53,33 +55,33 @@ namespace Pihrtsoft.Records
             return new Document(XDocument.Load(xmlReader, options.LoadOptions), options);
         }
 
-        public static RecordCollection ReadRecords(string uri, DocumentOptions options = null)
+        public static ImmutableArray<Record> ReadRecords(string uri, DocumentOptions options = null)
         {
             return Create(uri, options).Records();
         }
 
-        public static RecordCollection ReadRecords(Stream stream, DocumentOptions options = null)
+        public static ImmutableArray<Record> ReadRecords(Stream stream, DocumentOptions options = null)
         {
             return Create(stream, options).Records();
         }
 
-        public static RecordCollection ReadRecords(TextReader textReader, DocumentOptions options = null)
+        public static ImmutableArray<Record> ReadRecords(TextReader textReader, DocumentOptions options = null)
         {
             return Create(textReader, options).Records();
         }
 
-        public static RecordCollection ReadRecords(XmlReader xmlReader, DocumentOptions options = null)
+        public static ImmutableArray<Record> ReadRecords(XmlReader xmlReader, DocumentOptions options = null)
         {
             return Create(xmlReader, options).Records();
         }
 
-        public RecordCollection Records()
+        public ImmutableArray<Record> Records()
         {
             var reader = new XmlRecordReader(XDocument, Options);
 
             reader.ReadAll();
 
-            return new RecordCollection(reader.Records);
+            return reader.Records.ToImmutableArray();
         }
     }
 }

@@ -5,28 +5,28 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using Pihrtsoft.Records.Operations;
 using Pihrtsoft.Records.Utilities;
 using static Pihrtsoft.Records.Utilities.ThrowHelper;
 
-namespace Pihrtsoft.Records
+namespace Pihrtsoft.Records.Xml
 {
-    internal abstract class AbstractRecordReader
+    internal class RecordReader
     {
-        protected AbstractRecordReader(XElement element, EntityDefinition entity, DocumentOptions options)
+        private XElement _current;
+
+        public RecordReader(EntityDefinition entity, DocumentOptions options)
         {
-            Element = element;
             Entity = entity;
             Options = options;
         }
-
-        protected XElement Element { get; }
 
         public EntityDefinition Entity { get; }
 
         public DocumentOptions Options { get; }
 
-        private XElement Current { get; set; }
+        protected Dictionary<string, Record> WithRecords { get; set; }
+
+        public Collection<Record> Records { get; private set; }
 
         private int Depth { get; set; } = -1;
 
@@ -34,21 +34,44 @@ namespace Pihrtsoft.Records
 
         private Stack<Variable> Variables { get; set; }
 
-        public virtual bool ShouldCheckRequiredProperty { get; }
+        public virtual bool ShouldCheckRequiredProperty => true;
 
-        public abstract Collection<Record> ReadRecords();
+        protected virtual void AddRecord(Record record)
+        {
+            (Records ?? (Records = new Collection<Record>())).Add(record);
+        }
 
-        protected abstract void AddRecord(Record record);
+        protected virtual Record CreateRecord(string id)
+        {
+            if (id != null
+                && WithRecords != null
+                && WithRecords.TryGetValue(id, out Record record))
+            {
+                return record.WithEntity(Entity);
+            }
 
-        protected abstract Record CreateRecord(string id);
+            return new Record(Entity, id);
+        }
 
-        protected void Collect(IEnumerable<XElement> elements)
+        public void ReadRecords(XElement element, XElement withElement = null)
+        {
+            if (withElement != null)
+            {
+                var reader = new WithRecordReader(Entity, Options);
+                reader.ReadRecords(withElement);
+                WithRecords = reader.WithRecords;
+            }
+
+            ReadRecords(element.Elements());
+        }
+
+        protected void ReadRecords(IEnumerable<XElement> elements)
         {
             Depth++;
 
             foreach (XElement element in elements)
             {
-                Current = element;
+                _current = element;
 
                 switch (element.Kind())
                 {
@@ -66,7 +89,7 @@ namespace Pihrtsoft.Records
                             if (element.HasElements)
                             {
                                 PushOperations(element);
-                                Collect(element.Elements());
+                                ReadRecords(element.Elements());
                                 PopOperations();
                             }
 
@@ -77,7 +100,7 @@ namespace Pihrtsoft.Records
                             if (element.HasElements)
                             {
                                 AddVariable(element);
-                                Collect(element.Elements());
+                                ReadRecords(element.Elements());
                                 Variables.Pop();
                             }
 
@@ -90,7 +113,7 @@ namespace Pihrtsoft.Records
                         }
                 }
 
-                Current = null;
+                _current = null;
             }
 
             Depth--;
@@ -156,7 +179,8 @@ namespace Pihrtsoft.Records
 
             Record record = CreateRecord(id);
 
-            operations?.ExecuteAll(record);
+            if (operations != null)
+                ExecuteAll(operations, record);
 
             ExecuteChildOperations(element, record);
 
@@ -186,12 +210,12 @@ namespace Pihrtsoft.Records
         {
             foreach (XElement child in element.Elements())
             {
-                Current = child;
+                _current = child;
 
-                CreateOperationsFromElement(child).ExecuteAll(record);
+                ExecuteAll(CreateOperationsFromElement(child), record);
             }
 
-            Current = element;
+            _current = element;
         }
 
         private void ExecutePendingOperations(Record record)
@@ -436,16 +460,22 @@ namespace Pihrtsoft.Records
             {
                 Variable variable = Variables.FirstOrDefault(f => DefaultComparer.NameEquals(name, f.Name));
 
-                if (variable != null)
+                if (!variable.IsDefault)
                     return variable;
             }
 
             return Entity.FindVariable(name);
         }
 
+        private static void ExecuteAll(IEnumerable<Operation> propertyOperations, Record record)
+        {
+            foreach (Operation propertyOperation in propertyOperations)
+                propertyOperation.Execute(record);
+        }
+
         protected void Throw(string message, XObject @object = null)
         {
-            ThrowInvalidOperation(message, @object ?? Current);
+            ThrowInvalidOperation(message, @object ?? _current);
         }
     }
 }
