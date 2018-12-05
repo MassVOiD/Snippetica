@@ -1,32 +1,24 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
-using Pihrtsoft.Records;
 using Pihrtsoft.Snippets;
 
-namespace Snippetica
+namespace Snippetica.CodeGeneration
 {
-    public static class SnippetDirectoryMapper
+    internal static class ParseHelpers
     {
-        public static SnippetDirectory MapFromRecord(Record record)
-        {
-            return new SnippetDirectory(
-                record.GetString("Path"),
-                ParseEnumValue(record.GetString("Language")),
-                record.GetTags());
-        }
-
-        private static Language ParseEnumValue(string value)
+        public static Language ParseLanguage(string value)
         {
             switch (value)
             {
                 case "Cpp":
                     return Language.Cpp;
+                case "C#":
                 case "CSharp":
                     return Language.CSharp;
                 case "Html":
                     return Language.Html;
+                case "VB":
                 case "VisualBasic":
                     return Language.VisualBasic;
                 case "Xaml":
@@ -39,8 +31,7 @@ namespace Snippetica
                     return Language.Markdown;
                 default:
                     {
-                        Debug.Fail(value);
-                        throw new NotSupportedException();
+                        throw new InvalidOperationException();
                     }
             }
         }

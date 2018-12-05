@@ -29,20 +29,20 @@ namespace Pihrtsoft.Records
 
         public static string ParseAttributeValue(string value, AbstractRecordReader reader)
         {
-            DocumentSettings settings = reader.Settings;
+            DocumentOptions options = reader.Options;
 
-            if (!settings.UseVariables)
+            if (!options.UseVariables)
                 return value;
 
             for (int i = 0; i < value.Length; i++)
             {
-                if (value[i] == settings.OpenVariableDelimiter)
+                if (value[i] == options.OpenVariableDelimiter)
                 {
                     if (i == value.Length - 1)
                     {
-                        Throw.CharacterMustBeEscaped(value, settings.OpenVariableDelimiter);
+                        Throw.CharacterMustBeEscaped(value, options.OpenVariableDelimiter);
                     }
-                    else if (value[i + 1] == settings.OpenVariableDelimiter)
+                    else if (value[i + 1] == options.OpenVariableDelimiter)
                     {
                         i++;
                     }
@@ -59,21 +59,21 @@ namespace Pihrtsoft.Records
                         {
                             if (!fInside)
                             {
-                                if (value[i] == settings.OpenVariableDelimiter)
+                                if (value[i] == options.OpenVariableDelimiter)
                                 {
                                     fInside = true;
                                     startIndex = i;
                                 }
-                                else if (value[i] == settings.CloseVariableDelimiter)
+                                else if (value[i] == options.CloseVariableDelimiter)
                                 {
                                     if (i == value.Length - 1
-                                        || value[i + 1] != settings.CloseVariableDelimiter)
+                                        || value[i + 1] != options.CloseVariableDelimiter)
                                     {
-                                        Throw.CharacterMustBeEscaped(value, settings.CloseVariableDelimiter);
+                                        Throw.CharacterMustBeEscaped(value, options.CloseVariableDelimiter);
                                     }
                                 }
                             }
-                            else if (value[i] == settings.OpenVariableDelimiter)
+                            else if (value[i] == options.OpenVariableDelimiter)
                             {
                                 if (i - startIndex == 1)
                                 {
@@ -82,10 +82,10 @@ namespace Pihrtsoft.Records
                                 }
                                 else
                                 {
-                                    Throw.VariableNameCannotContainCharacter(value, settings.OpenVariableDelimiter);
+                                    Throw.VariableNameCannotContainCharacter(value, options.OpenVariableDelimiter);
                                 }
                             }
-                            else if (value[i] == settings.CloseVariableDelimiter)
+                            else if (value[i] == options.CloseVariableDelimiter)
                             {
                                 int length = i - startIndex - 1;
 
@@ -111,7 +111,7 @@ namespace Pihrtsoft.Records
                         }
 
                         if (fInside)
-                            Throw.VariableMustBeClosed(value, settings.OpenVariableDelimiter);
+                            Throw.VariableMustBeClosed(value, options.OpenVariableDelimiter);
 
                         if (lastEndIndex > 0)
                             sb.Append(value, lastEndIndex, value.Length - lastEndIndex);

@@ -31,7 +31,10 @@ namespace Snippetica.CodeGeneration
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1163:Unused parameter.")]
         private static void Main(string[] args)
         {
-            _shortcuts = ShortcutInfo.LoadFromFile(@"..\..\Data\Shortcuts.xml").ToArray();
+            _shortcuts = Pihrtsoft.Records.Document.ReadRecords(@"..\..\Data\Shortcuts.xml")
+                .Where(f => !f.HasTag(KnownTags.Disabled))
+                .Select(Mapper.MapShortcutInfo)
+                .ToArray();
 
             SnippetDirectory[] directories = LoadDirectories(@"..\..\Data\Directories.xml");
 
@@ -160,7 +163,7 @@ namespace Snippetica.CodeGeneration
         {
             return Pihrtsoft.Records.Document.ReadRecords(url)
                 .Where(f => !f.HasTag(KnownTags.Disabled))
-                .Select(SnippetDirectoryMapper.MapFromRecord)
+                .Select(Mapper.MapSnippetDirectory)
                 .ToArray();
         }
 
@@ -172,7 +175,7 @@ namespace Snippetica.CodeGeneration
 
             foreach (TypeDefinition typeDefinition in Pihrtsoft.Records.Document.ReadRecords(@"..\..\Data\Types.xml")
                 .Where(f => !f.HasTag(KnownTags.Disabled))
-                .Select(Mapper.CreateType))
+                .Select(Mapper.MapTypeDefinition))
             {
                 LanguageDefinitions.CSharp.Types.Add(typeDefinition);
                 LanguageDefinitions.VisualBasic.Types.Add(typeDefinition);

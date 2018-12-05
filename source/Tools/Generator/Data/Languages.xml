@@ -20,7 +20,7 @@
             <New Id="Virtual" Shortcut="v" />
           </With>
           <Records>
-            <With Language="CSharp">
+            <With Language="C#">
               <New Id="Public" Keyword="public" />
               <New Id="Internal" Keyword="internal" />
               <New Id="Protected" Keyword="protected" />
@@ -28,7 +28,7 @@
               <New Id="Static" Keyword="static" />
               <New Id="Virtual" Keyword="virtual" />
             </With>
-            <With Language="VisualBasic">
+            <With Language="VB">
               <New Id="Public" Keyword="Public" />
               <New Id="Internal" Keyword="Friend" />
               <New Id="Protected" Keyword="Protected" />
@@ -73,7 +73,7 @@
             </With>
           </With>
           <Records>
-            <With Language="CSharp">
+            <With Language="C#">
               <New Id="This" Title="this" Keyword="this" DefaultValue="null" />
               <New Id="Void" Title="void" Keyword="void" />
               <New Id="Boolean" Keyword="bool" DefaultValue="false" />
@@ -87,7 +87,7 @@
               <New Id="Char" Keyword="char" DefaultValue="'\0'" />
               <New Id="DateTime" Keyword="DateTime" DefaultValue="DateTime.MinValue" Namespace="System" />
             </With>
-            <With Language="VisualBasic">
+            <With Language="VB">
               <New Id="This" Title="this" Keyword="this" DefaultValue="Nothing" />
               <New Id="Void" Title="Sub" Keyword="Sub" />
               <New Id="Boolean" Keyword="Boolean" DefaultValue="False" />

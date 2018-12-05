@@ -9,8 +9,8 @@ namespace Pihrtsoft.Records
 {
     internal class RecordReader : AbstractRecordReader
     {
-        public RecordReader(XElement element, EntityDefinition entity, DocumentSettings settings, IEnumerable<Record> withRecords = null)
-            : base(element, entity, settings)
+        public RecordReader(XElement element, EntityDefinition entity, DocumentOptions options, IEnumerable<Record> withRecords = null)
+            : base(element, entity, options)
         {
             WithRecords = (withRecords != null)
                 ? new WithRecordCollection(withRecords)
@@ -21,10 +21,7 @@ namespace Pihrtsoft.Records
 
         private Collection<Record> Records { get; set; }
 
-        public override bool ShouldCheckRequiredProperty
-        {
-            get { return true; }
-        }
+        public override bool ShouldCheckRequiredProperty => true;
 
         public override Collection<Record> ReadRecords()
         {

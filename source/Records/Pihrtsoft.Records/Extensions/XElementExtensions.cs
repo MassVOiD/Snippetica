@@ -40,7 +40,7 @@ namespace Pihrtsoft.Records
                     return ElementKind.Postfix;
                 default:
                     {
-                        Debug.Assert(false, element.ToString());
+                        Debug.Fail(element.ToString());
                         return ElementKind.None;
                     }
             }

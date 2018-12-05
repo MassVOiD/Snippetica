@@ -8,8 +8,8 @@ namespace Pihrtsoft.Records
 {
     internal class WithRecordReader : AbstractRecordReader
     {
-        public WithRecordReader(XElement element, EntityDefinition entity, DocumentSettings settings)
-            : base(element, entity, settings)
+        public WithRecordReader(XElement element, EntityDefinition entity, DocumentOptions options)
+            : base(element, entity, options)
         {
         }
 

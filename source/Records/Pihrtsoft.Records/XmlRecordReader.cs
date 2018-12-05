@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using Pihrtsoft.Records.Utilities;
@@ -9,35 +12,126 @@ using static Pihrtsoft.Records.Utilities.ThrowHelper;
 
 namespace Pihrtsoft.Records
 {
-    internal class EntityElement
+    internal class XmlRecordReader
     {
+        private XElement _documentElement;
+        private XElement _entitiesElement;
+        private XElement _entityElement;
+
+        private readonly Queue<EntitiesInfo> _entities = new Queue<EntitiesInfo>();
+
         private XElement _declarationsElement;
         private XElement _withElement;
         private XElement _recordsElement;
-        private XElement _entitiesElement;
+        private XElement _childEntitiesElement;
 
-        public EntityElement(XElement element, DocumentSettings settings, EntityDefinition baseEntity = null)
+        private EntityDefinition _entityDefinition;
+
+        public XmlRecordReader(XDocument document, DocumentOptions options)
         {
-            Settings = settings;
-
-            Scan(element.Elements());
-
-            ExtendedKeyedCollection<string, PropertyDefinition> properties = null;
-            ExtendedKeyedCollection<string, Variable> variables = null;
-
-            if (_declarationsElement != null)
-                ScanDeclarations(_declarationsElement.Elements(), out properties, out variables);
-
-            Entity = new EntityDefinition(element, baseEntity, properties, variables);
+            Document = document;
+            Options = options;
         }
 
-        public DocumentSettings Settings { get; }
+        public XDocument Document { get; }
 
-        public EntityDefinition Entity { get; }
+        public DocumentOptions Options { get; }
 
-        private void Scan(IEnumerable<XElement> elements)
+        public ImmutableArray<Record>.Builder Records { get; } = ImmutableArray.CreateBuilder<Record>();
+
+        public void ReadAll()
         {
-            foreach (XElement element in elements)
+            _documentElement = Document.FirstElement();
+
+            if (_documentElement == null
+                || !DefaultComparer.NameEquals(_documentElement, ElementNames.Document))
+            {
+                ThrowInvalidOperation(ErrorMessages.MissingElement(ElementNames.Document));
+            }
+
+            string versionText = _documentElement.AttributeValueOrDefault(AttributeNames.Version);
+
+            if (versionText != null)
+            {
+                if (!Version.TryParse(versionText, out Version version))
+                {
+                    ThrowInvalidOperation(ErrorMessages.InvalidDocumentVersion());
+                }
+                else if (version > Pihrtsoft.Records.Document.SchemaVersion)
+                {
+                    ThrowInvalidOperation(ErrorMessages.DocumentVersionIsNotSupported(version, Pihrtsoft.Records.Document.SchemaVersion));
+                }
+            }
+
+            foreach (XElement element in _documentElement.Elements())
+            {
+                switch (element.Kind())
+                {
+                    case ElementKind.Entities:
+                        {
+                            if (_entitiesElement != null)
+                                ThrowOnMultipleElementsWithEqualName(element);
+
+                            _entitiesElement = element;
+                            break;
+                        }
+                    default:
+                        {
+                            ThrowOnUnknownElement(element);
+                            break;
+                        }
+                }
+            }
+
+            if (_entitiesElement == null)
+                return;
+
+            _entities.Enqueue(new EntitiesInfo(_entitiesElement));
+
+            while (_entities.Count > 0)
+            {
+                EntitiesInfo entities = _entities.Dequeue();
+
+                foreach (XElement element in entities.Element.Elements())
+                {
+                    if (element.Kind() != ElementKind.Entity)
+                        ThrowOnUnknownElement(element);
+
+                    _entityElement = element;
+
+                    ScanEntity();
+
+                    ExtendedKeyedCollection<string, PropertyDefinition> properties = null;
+                    ExtendedKeyedCollection<string, Variable> variables = null;
+
+                    if (_declarationsElement != null)
+                        ScanDeclarations(out properties, out variables);
+
+                    _entityDefinition = new EntityDefinition(_entityElement, baseEntity: entities.BaseEntity, properties, variables);
+
+                    if (_recordsElement != null)
+                    {
+                        var reader = new RecordReader(_recordsElement, _entityDefinition, Options, ReadWithRecords());
+
+                        Records.AddRange(reader.ReadRecords());
+                    }
+
+                    if (_childEntitiesElement != null)
+                        _entities.Enqueue(new EntitiesInfo(_childEntitiesElement, _entityDefinition));
+
+                    _entityDefinition = null;
+                    _entityElement = null;
+                    _declarationsElement = null;
+                    _withElement = null;
+                    _recordsElement = null;
+                    _childEntitiesElement = null;
+                }
+            }
+        }
+
+        private void ScanEntity()
+        {
+            foreach (XElement element in _entityElement.Elements())
             {
                 switch (element.Kind())
                 {
@@ -67,10 +161,10 @@ namespace Pihrtsoft.Records
                         }
                     case ElementKind.Entities:
                         {
-                            if (_entitiesElement != null)
+                            if (_childEntitiesElement != null)
                                 ThrowOnMultipleElementsWithEqualName(element);
 
-                            _entitiesElement = element;
+                            _childEntitiesElement = element;
                             break;
                         }
                     default:
@@ -82,12 +176,12 @@ namespace Pihrtsoft.Records
             }
         }
 
-        private static void ScanDeclarations(IEnumerable<XElement> elements, out ExtendedKeyedCollection<string, PropertyDefinition> properties, out ExtendedKeyedCollection<string, Variable> variables)
+        private void ScanDeclarations(out ExtendedKeyedCollection<string, PropertyDefinition> properties, out ExtendedKeyedCollection<string, Variable> variables)
         {
             properties = null;
             variables = null;
 
-            foreach (XElement element in elements)
+            foreach (XElement element in _declarationsElement.Elements())
             {
                 switch (element.Kind())
                 {
@@ -192,12 +286,12 @@ namespace Pihrtsoft.Records
             }
         }
 
-        private Collection<Record> ReadWith()
+        private Collection<Record> ReadWithRecords()
         {
             if (_withElement == null)
                 return null;
 
-            var reader = new WithRecordReader(_withElement, Entity, Settings);
+            var reader = new WithRecordReader(_withElement, _entityDefinition, Options);
 
             Collection<Record> records = reader.ReadRecords();
 
@@ -207,33 +301,26 @@ namespace Pihrtsoft.Records
             return new ExtendedKeyedCollection<string, Record>(records.ToArray(), DefaultComparer.StringComparer);
         }
 
-        public Collection<Record> Records()
-        {
-            if (_recordsElement == null)
-                return null;
-
-            var reader = new RecordReader(_recordsElement, Entity, Settings, ReadWith());
-
-            return reader.ReadRecords();
-        }
-
-        public IEnumerable<EntityElement> EntityElements()
-        {
-            if (_entitiesElement == null)
-                yield break;
-
-            foreach (XElement element in _entitiesElement.Elements())
-            {
-                if (element.Kind() != ElementKind.Entity)
-                    ThrowOnUnknownElement(element);
-
-                yield return new EntityElement(element, Settings, Entity);
-            }
-        }
-
         private static void Throw(string message, XObject @object)
         {
             ThrowInvalidOperation(message, @object);
+        }
+
+        [DebuggerDisplay("{DebuggerDisplay,nq}")]
+        private struct EntitiesInfo
+        {
+            public EntitiesInfo(XElement element, EntityDefinition baseEntity = null)
+            {
+                Element = element;
+                BaseEntity = baseEntity;
+            }
+
+            public XElement Element { get; }
+
+            public EntityDefinition BaseEntity { get; }
+
+            [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+            private string DebuggerDisplay => (BaseEntity != null) ? $"{BaseEntity.Name} {Element}" : Element?.ToString();
         }
     }
 }

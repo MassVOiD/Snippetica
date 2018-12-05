@@ -8,10 +8,10 @@
       </Declarations>
       <Records>
         <Prefix Path="..\..\..\..\Snippetica\Snippetica">
-          <With Language="CSharp">
+          <With Language="C#">
             <New Path=".CSharp" />
           </With>
-          <With Language="VisualBasic">
+          <With Language="VB">
             <New Path=".VisualBasic" />
           </With>
           <With Language="Cpp">

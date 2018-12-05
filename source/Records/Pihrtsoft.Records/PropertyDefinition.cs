@@ -7,7 +7,7 @@ using Pihrtsoft.Records.Utilities;
 
 namespace Pihrtsoft.Records
 {
-    [DebuggerDisplay("Name = {Name,nq}, IsCollection = {IsCollection}, IsRequired = {IsRequired}, DefaultValue = {DefaultValue}")]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class PropertyDefinition : IKey<string>
     {
         internal PropertyDefinition(
@@ -31,7 +31,7 @@ namespace Pihrtsoft.Records
             }
             else
             {
-                SeparatorsArray = Empty.Array<char>();
+                SeparatorsArray = System.Array.Empty<char>();
                 Separators = Empty.ReadOnlyCollection<char>();
             }
         }
@@ -57,6 +57,12 @@ namespace Pihrtsoft.Records
         internal char[] SeparatorsArray { get; }
 
         public ReadOnlyCollection<char> Separators { get; }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay
+        {
+            get { return $"{Name} IsCollection = {IsCollection} IsRequired = {IsRequired} DefaultValue = {DefaultValue}"; }
+        }
 
         string IKey<string>.GetKey()
         {

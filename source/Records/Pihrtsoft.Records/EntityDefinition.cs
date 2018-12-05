@@ -8,7 +8,7 @@ using Pihrtsoft.Records.Utilities;
 
 namespace Pihrtsoft.Records
 {
-    [DebuggerDisplay("{Name,nq} {BaseEntity.Name,nq} Properties: {PropertiesText,nq}")]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class EntityDefinition : IKey<string>
     {
         internal EntityDefinition(
@@ -88,6 +88,12 @@ namespace Pihrtsoft.Records
         }
 
         internal static string GlobalName { get; } = "_Global";
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay
+        {
+            get { return $"{Name} {BaseEntity.Name} Properties: {PropertiesText}"; }
+        }
 
         public IEnumerable<PropertyDefinition> AllProperties()
         {

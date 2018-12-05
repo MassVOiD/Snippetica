@@ -13,17 +13,21 @@ namespace Pihrtsoft.Records
 {
     internal abstract class AbstractRecordReader
     {
-        protected AbstractRecordReader(XElement element, EntityDefinition entity, DocumentSettings settings)
+        protected AbstractRecordReader(XElement element, EntityDefinition entity, DocumentOptions options)
         {
             Element = element;
             Entity = entity;
-            Settings = settings;
+            Options = options;
         }
 
         protected XElement Element { get; }
+
         public EntityDefinition Entity { get; }
-        public DocumentSettings Settings { get; }
+
+        public DocumentOptions Options { get; }
+
         private XElement Current { get; set; }
+
         private int Depth { get; set; } = -1;
 
         private StringKeyedCollection<PropertyOperationCollection> PropertyOperations { get; set; }
@@ -272,7 +276,7 @@ namespace Pihrtsoft.Records
                     }
                     else
                     {
-                        Debug.Assert(false, kind.ToString());
+                        Debug.Fail(kind.ToString());
                     }
                 }
 
