@@ -27,7 +27,7 @@ namespace Pihrtsoft.Records.Xml
                 .ToArray();
         }
 
-        public static string ParseAttributeValue(string value, RecordReader reader)
+        public static string ParseAttributeValue(string value, XmlRecordReader reader)
         {
             DocumentOptions options = reader.Options;
 

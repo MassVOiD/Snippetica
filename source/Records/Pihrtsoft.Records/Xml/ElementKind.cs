@@ -4,18 +4,18 @@ namespace Pihrtsoft.Records.Xml
 {
     internal enum ElementKind
     {
-        None,
-        Document,
-        Entity,
-        Entities,
-        Declarations,
-        Variable,
-        Property,
-        Records,
-        New,
-        With,
-        Without,
-        Prefix,
-        Postfix,
+        None = 0,
+        Document = 1,
+        Entity = 2,
+        Entities = 3,
+        Declarations = 4,
+        Variable = 5,
+        Property = 6,
+        Records = 7,
+        New = 8,
+        With = 9,
+        Without = 10,
+        Prefix = 11,
+        Postfix = 12,
     }
 }
