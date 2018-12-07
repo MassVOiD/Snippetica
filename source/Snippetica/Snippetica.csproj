@@ -64,7 +64,6 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="License.txt" />
-    <None Include="Snippetica.Cpp\Dev\LogicalNotOperator.snippet" />
     <None Include="Snippetica.Cpp\PureVirtualFunction.snippet" />
     <None Include="Snippetica.Cpp\LambdaExpression.snippet" />
     <None Include="Snippetica.Cpp\Dev\LambdaExpressionMinimal.snippet" />
